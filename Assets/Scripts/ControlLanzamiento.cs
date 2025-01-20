@@ -20,7 +20,7 @@ public class ControlLanzamiento : MonoBehaviour
         bolaRB = bola.GetComponent<Rigidbody2D>();
         bolaSpringJoint = bola.GetComponent<SpringJoint2D>();
         bolaSpringJoint.connectedBody = pivote;
-        arrastrando = true;
+        arrastrando = false;
     }
 
     // Update is called once per frame
@@ -36,7 +36,7 @@ public class ControlLanzamiento : MonoBehaviour
         if (!Touchscreen.current.primaryTouch.press.isPressed && arrastrando == true)
         {
             arrastrando = false;
-            Invoke("LanzaBola", 1.0f);
+            Invoke("LanzaBola", 0.1f);
         }
 
         if (Touchscreen.current.primaryTouch.press.isPressed)
@@ -56,6 +56,6 @@ public class ControlLanzamiento : MonoBehaviour
 
     private void LanzaBola()
     {
-        Debug.Log("lanza bola");
+        bolaSpringJoint.enabled = false;
     }
 }
