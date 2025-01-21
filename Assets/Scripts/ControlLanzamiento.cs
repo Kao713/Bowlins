@@ -21,41 +21,58 @@ public class ControlLanzamiento : MonoBehaviour
         bolaSpringJoint = bola.GetComponent<SpringJoint2D>();
         bolaSpringJoint.connectedBody = pivote;
         arrastrando = false;
+        bolaRB.isKinematic = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (bolaRB != null) return;
-
-        //Se ha presionado?
-        if (!Touchscreen.current.primaryTouch.press.isPressed && arrastrando == false)
-        {
-            return;
-        }
-        if (!Touchscreen.current.primaryTouch.press.isPressed && arrastrando == true)
-        {
-            arrastrando = false;
-            Invoke("LanzaBola", 0.1f);
-        }
+        if (bolaRB == null) return;
 
         if (Touchscreen.current.primaryTouch.press.isPressed)
         {
             arrastrando = true;
+            bolaRB.isKinematic = true;
+
+            //Donde se ha pulsado
+            Vector2 posicion = Touchscreen.current.primaryTouch.position.ReadValue();
+            //Debug.Log("posicion" + posicion + "*");
+            Vector3 posicionGlobal = cam.ScreenToWorldPoint(posicion);
+
+            //Control bola y pivote
+            bolaRB.position = posicionGlobal;
         }
 
-        //Donde se ha pulsado
-        Vector2 posicion = Touchscreen.current.primaryTouch.position.ReadValue();
-        //Debug.Log("posicion" + posicion + "*");
-        Vector3 posicionGlobal = cam.ScreenToWorldPoint(posicion);
+        //Se ha presionado?
+        else
+        {
+            if (arrastrando == false)
+            {
+                return;
+            }
+            else
+            {
+                
+                Invoke("LanzaBola", 0.1f);
+                arrastrando = false;
+            }
 
-        //Control bola y pivote
-        bolaRB.position = posicionGlobal;
+        }
 
     }
 
     private void LanzaBola()
     {
+        bolaRB.isKinematic = false;
+        bolaRB = null;
+
+        Invoke("CortarCuerda", 0.2f);
+    }
+
+    private void CortarCuerda()
+    {
+
         bolaSpringJoint.enabled = false;
+        bolaSpringJoint = null;
     }
 }
